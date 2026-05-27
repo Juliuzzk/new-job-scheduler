@@ -1,0 +1,10 @@
+{
+  "jobs": [
+    {
+      "name": "exampleJob",
+      "className": "cl.jcaceres.jobscheduler.jobs.ExampleJob",
+      "cron": "0/10 * * * * ?",
+      "enabled": true
+    }
+  ]
+}
