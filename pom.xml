@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cl.jcaceres</groupId>
-	<artifactId>job-scheduler</artifactId>
+	<artifactId>jobflow-scheduler</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>job-scheduler</name>
-	<description>Spring Boot application for managing and executing dynamic Quartz jobs persisted in JSON configuration.</description>
+	<name>JobFlowScheduler</name>
+	<description>Spring Boot application for managing and executing dynamic Quartz jobs with modular architecture and external configuration.</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -54,11 +54,15 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.yaml</groupId>
+		<artifactId>snakeyaml</artifactId>
+	</dependency>
 	</dependencies>
 
 	<build>

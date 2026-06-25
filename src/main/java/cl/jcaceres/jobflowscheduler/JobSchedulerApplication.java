@@ -1,4 +1,4 @@
-package cl.jcaceres.jobscheduler;
+package cl.jcaceres.jobflowscheduler;
 
 import java.util.ArrayList;
 import java.util.List;

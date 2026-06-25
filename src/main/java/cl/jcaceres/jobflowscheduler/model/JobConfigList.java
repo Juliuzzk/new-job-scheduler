@@ -1,4 +1,4 @@
-package cl.jcaceres.jobscheduler.model;
+package cl.jcaceres.jobflowscheduler.model;
 
 import java.util.List;
 

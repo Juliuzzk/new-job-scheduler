@@ -1,4 +1,4 @@
-package cl.jcaceres.jobscheduler.config;
+package cl.jcaceres.jobflowscheduler.config;
 
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -13,14 +13,17 @@ public class QuartzConfig {
 
     @Bean
     // @Bean le dice a Spring:
-    // “El objeto que retorna este método debe vivir dentro del contenedor de
-    // Spring”.
+    // "El objeto que retorna este método debe vivir dentro del contenedor de
+    // Spring".
     // Spring ejecuta este método una sola vez y guarda el resultado como un bean
     // singleton.
     public SchedulerFactoryBean schedulerFactoryBean() {
         // SchedulerFactoryBean es la fábrica oficial de Quartz dentro de Spring.
         // Se encarga de crear y configurar el Scheduler real.
-        return new SchedulerFactoryBean();
+        SchedulerFactoryBean factoryBean = new SchedulerFactoryBean();
+        // No iniciamos el scheduler aquí, lo hacemos después de registrar los jobs
+        factoryBean.setAutoStartup(false);
+        return factoryBean;
     }
 
     @Bean
@@ -32,8 +35,8 @@ public class QuartzConfig {
         // Este es el motor que ejecutará los jobs y manejará los triggers.
         Scheduler scheduler = factory.getScheduler();
 
-        // Arranca Quartz: crea hilos internos y comienza a ejecutar los jobs agendados.
-        scheduler.start();
+        // Nota: No iniciamos el scheduler aquí.
+        // JobRegistryService lo iniciará después de registrar todos los jobs.
 
         // Retornamos el Scheduler para que Spring lo registre como bean
         // y pueda inyectarlo en JobRegistryService, por ejemplo.

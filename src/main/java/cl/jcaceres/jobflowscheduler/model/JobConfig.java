@@ -1,4 +1,4 @@
-package cl.jcaceres.jobscheduler.model;
+package cl.jcaceres.jobflowscheduler.model;
 
 import lombok.Data;
 
@@ -9,4 +9,5 @@ public class JobConfig {
     private String className;
     private String cron;
     private boolean enabled;
+    private String configPath;
 }

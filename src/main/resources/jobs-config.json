@@ -1,10 +1,18 @@
 {
   "jobs": [
     {
-      "name": "exampleJob",
-      "className": "cl.jcaceres.jobscheduler.jobs.ExampleJob",
-      "cron": "0/10 * * * * ?",
-      "enabled": true
+      "name": "jobA",
+      "className": "cl.jcaceres.jobflowscheduler.jobs.job_a.JobAExecutor",
+      "cron": "0/15 * * * * ?",
+      "enabled": true,
+      "configPath": "config/job-a"
+    },
+    {
+      "name": "jobB",
+      "className": "cl.jcaceres.jobflowscheduler.jobs.job_b.JobBExecutor",
+      "cron": "0/20 * * * * ?",
+      "enabled": true,
+      "configPath": "config/job-b"
     }
   ]
 }
