@@ -3,36 +3,38 @@ package cl.jcaceres.jobflowscheduler.service;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cl.jcaceres.jobflowscheduler.model.JobConfigList;
 
-/**
- * Gestor de configuración de jobs.
- * Carga la configuración JSON desde el classpath.
- */
 @Service
 public class JobConfigManager {
 
-    private static final String CONFIG_FILE = "jobs-config.json";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    /**
-     * Carga la configuración de jobs desde el archivo JSON en el classpath.
-     */
-    public JobConfigList loadCOnfig() throws IOException {
+    @Value("${jobs.config.path:classpath:jobs-config.json}")
+    private String configPath;
 
-        ClassPathResource resource = new ClassPathResource(CONFIG_FILE);
+    public JobConfigList loadCOnfig() throws IOException {
+        Resource resource;
+
+        if (configPath.startsWith("classpath:")) {
+            resource = new ClassPathResource(configPath.substring("classpath:".length()));
+        } else if (configPath.startsWith("file:")) {
+            resource = new FileSystemResource(configPath.substring("file:".length()));
+        } else {
+            resource = new FileSystemResource(configPath);
+        }
 
         try (InputStream inputStream = resource.getInputStream()) {
             return objectMapper.readValue(inputStream, JobConfigList.class);
-
         }
-
     }
 
 }

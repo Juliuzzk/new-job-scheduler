@@ -1,4 +1,4 @@
-package cl.jcaceres.jobscheduler;
+package cl.jcaceres.jobflowscheduler;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

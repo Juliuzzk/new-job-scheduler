@@ -3,66 +3,59 @@ package cl.jcaceres.jobflowscheduler.jobs.job_b;
 import java.io.IOException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cl.jcaceres.jobflowscheduler.util.JobLogger;
 import cl.jcaceres.jobflowscheduler.util.PropertyReader;
 
-/**
- * JobBService - Contiene la lógica específica de Job B
- * 
- * Responsabilidades:
- * - Cargar y validar configuración desde config.yaml
- * - Ejecutar la lógica de integración con API
- * - Logging detallado de ejecución
- */
 public class JobBService {
 
+    private static final Logger heartbeat = LoggerFactory.getLogger("heartbeat");
     private static final String CONFIG_FILE = "config/job-b/config.yaml";
 
-    /**
-     * Ejecuta el procesamiento de Job B
-     */
-    public void execute() throws IOException, InterruptedException {
-        
-        System.out.println("\n========== JOB B EJECUTÁNDOSE ==========");
-        System.out.println("Timestamp: " + java.time.LocalDateTime.now());
-        
-        // Cargar configuración
-        JobBConfig config = loadConfig();
-        
-        // Mostrar configuración cargada
-        printConfig(config);
-        
-        // Simular procesamiento
-        System.out.println("\nIntegrando con API usando configuración de Job B...");
-        Thread.sleep(500);
-        
-        System.out.println("Job B completado exitosamente. Notificación enviada a: " + config.getNotifyEmail());
-        System.out.println("========================================\n");
+    private final JobLogger log;
+
+    public JobBService(JobLogger log) {
+        this.log = log;
     }
 
-    /**
-     * Carga la configuración desde el archivo YAML
-     */
+    public void execute() throws IOException, InterruptedException {
+
+        log.info("========== JOB B EJECUTÁNDOSE ==========");
+        log.info("Timestamp: {}", java.time.LocalDateTime.now());
+
+        JobBConfig config = loadConfig();
+
+        printConfig(config);
+
+        log.info("Integrando con API usando configuración de Job B...");
+        Thread.sleep(500);
+
+        log.info("Job B completado exitosamente. Notificación enviada a: {}", config.getNotifyEmail());
+        log.info("========================================");
+
+        heartbeat.info("jobB ejecutado correctamente");
+    }
+
     @SuppressWarnings("unchecked")
     private JobBConfig loadConfig() throws IOException {
-        
+
         Map<String, Object> configMap = PropertyReader.readConfig(CONFIG_FILE);
-        
-        // Extraer configuración de API
+
         Map<String, Object> apiConfig = (Map<String, Object>) configMap.get("api");
         String apiEndpoint = (String) apiConfig.get("endpoint");
         String apiKey = (String) apiConfig.get("key");
         Integer apiTimeout = (Integer) apiConfig.get("timeout");
         Integer apiRetries = (Integer) apiConfig.get("retries");
-        
-        // Extraer configuración de Job B
+
         Map<String, Object> jobBConfig = (Map<String, Object>) configMap.get("job-b");
         Boolean jobBEnabled = (Boolean) jobBConfig.get("enabled");
         String jobBName = (String) jobBConfig.get("name");
         Integer bufferSize = (Integer) jobBConfig.get("buffer-size");
         Integer chunkSize = (Integer) jobBConfig.get("chunk-size");
         String notifyEmail = (String) jobBConfig.get("notify-email");
-        
-        // Construir objeto de configuración
+
         JobBConfig config = new JobBConfig();
         config.setApiEndpoint(apiEndpoint);
         config.setApiKey(apiKey);
@@ -73,27 +66,23 @@ public class JobBService {
         config.setBufferSize(bufferSize);
         config.setChunkSize(chunkSize);
         config.setNotifyEmail(notifyEmail);
-        
+
         return config;
     }
 
-    /**
-     * Imprime la configuración cargada
-     */
     private void printConfig(JobBConfig config) {
-        
-        System.out.println("\nConfiguraciones cargadas desde: " + CONFIG_FILE);
-        System.out.println("\nAPI Configuration:");
-        System.out.println("  - Endpoint: " + config.getApiEndpoint());
-        System.out.println("  - API Key: " + config.getApiKey());
-        System.out.println("  - Timeout: " + config.getApiTimeout() + "ms");
-        System.out.println("  - Retries: " + config.getApiRetries());
-        
-        System.out.println("\nJob B Configuration:");
-        System.out.println("  - Enabled: " + config.isEnabled());
-        System.out.println("  - Name: " + config.getName());
-        System.out.println("  - Buffer Size: " + config.getBufferSize());
-        System.out.println("  - Chunk Size: " + config.getChunkSize());
-        System.out.println("  - Notify Email: " + config.getNotifyEmail());
+
+        log.info("Configuraciones cargadas desde: {}", CONFIG_FILE);
+        log.info("API Configuration:");
+        log.info("  - Endpoint: {}", config.getApiEndpoint());
+        log.info("  - API Key: {}", config.getApiKey());
+        log.info("  - Timeout: {}ms", config.getApiTimeout());
+        log.info("  - Retries: {}", config.getApiRetries());
+        log.info("Job B Configuration:");
+        log.info("  - Enabled: {}", config.isEnabled());
+        log.info("  - Name: {}", config.getName());
+        log.info("  - Buffer Size: {}", config.getBufferSize());
+        log.info("  - Chunk Size: {}", config.getChunkSize());
+        log.info("  - Notify Email: {}", config.getNotifyEmail());
     }
 }

@@ -4,25 +4,22 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-/**
- * Job A - Ejemplo de job que lee configuración desde un archivo .properties
- * 
- * Responsabilidades:
- * - Orquestar la lógica de procesamiento de datos
- * - Integrar con el servicio de configuración
- * - Manejar errores
- */
+import cl.jcaceres.jobflowscheduler.util.JobLogger;
+
 public class JobAExecutor implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        
-        JobAService service = new JobAService();
-        
+
+        boolean loggingEnabled = context.getMergedJobDataMap().getBoolean("loggingEnabled");
+        JobLogger log = new JobLogger("jobA", loggingEnabled);
+
+        JobAService service = new JobAService(log);
+
         try {
             service.execute();
         } catch (Exception e) {
-            System.err.println("Error en Job A: " + e.getMessage());
+            log.error("Error en Job A: " + e.getMessage());
             throw new JobExecutionException("Error en Job A: " + e.getMessage(), e);
         }
     }

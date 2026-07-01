@@ -4,9 +4,12 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.TriggerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import cl.jcaceres.jobflowscheduler.model.JobConfig;
@@ -15,6 +18,8 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class JobRegistryService {
+
+    private static final Logger log = LoggerFactory.getLogger(JobRegistryService.class);
 
     private final Scheduler scheduler;
     private final JobConfigManager jobConfigManager;
@@ -45,11 +50,17 @@ public class JobRegistryService {
                     continue;
                 }
 
-                // Cargamos la clase del job
                 Class<? extends Job> jobClass = loadClass(config.getClassName());
 
-                // Creamos el job con su detalle
-                JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(config.getName()).storeDurably(false)
+                boolean loggingEnabled = config.getLogging() != null && config.getLogging().isEnabled();
+
+                JobDataMap jobDataMap = new JobDataMap();
+                jobDataMap.put("loggingEnabled", loggingEnabled);
+
+                JobDetail jobDetail = JobBuilder.newJob(jobClass)
+                        .withIdentity(config.getName())
+                        .storeDurably(false)
+                        .usingJobData(jobDataMap)
                         .build();
 
                 // Creamos un trigger con el cron configurado
@@ -78,6 +89,7 @@ public class JobRegistryService {
             if (!scheduler.isStarted()) {
                 scheduler.start();
                 System.out.println("Quartz Scheduler iniciado correctamente.\n");
+                log.info("Los logs detallados de cada job se encuentran en logs/<jobName>.log (si el logging está habilitado)");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al iniciar el Scheduler", e);
