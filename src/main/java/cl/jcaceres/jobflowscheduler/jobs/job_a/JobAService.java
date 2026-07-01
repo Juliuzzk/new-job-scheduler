@@ -6,13 +6,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cl.jcaceres.jobflowscheduler.service.DatabaseService;
 import cl.jcaceres.jobflowscheduler.util.JobLogger;
 import cl.jcaceres.jobflowscheduler.util.PropertyReader;
+import cl.jcaceres.jobflowscheduler.util.SqlReader;
 
 public class JobAService {
 
     private static final Logger heartbeat = LoggerFactory.getLogger("heartbeat");
     private static final String CONFIG_FILE = "config/job-a/application.properties";
+    private static final String SQL_QUERIES = SqlReader
+            .readSQLResource("cl/jcaceres/jobflowscheduler/jobs/job_a/sql/queries.sql");
 
     private final JobLogger log;
 
@@ -29,8 +33,15 @@ public class JobAService {
 
         printConfig(config);
 
-        log.info("Procesando datos con configuración de Job A...");
-        Thread.sleep(500);
+        log.info("Ejecutando queries en base de datos...");
+        DatabaseService.executeQueries(
+                config.getDatabaseHost(),
+                Integer.parseInt(config.getDatabasePort()),
+                config.getDatabaseName(),
+                config.getDatabaseUser(),
+                config.getDatabasePassword(),
+                SQL_QUERIES,
+                log);
 
         log.info("Job A completado exitosamente.");
         log.info("========================================");
